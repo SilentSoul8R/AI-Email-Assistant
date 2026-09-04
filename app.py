@@ -8,7 +8,7 @@ from groq import Groq
 # ----------------------------------------------------------------------------
 st.set_page_config(
     page_title="AI Email Generator",
-    page_icon="✉️",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -347,5 +347,10 @@ if "last_email" in st.session_state:
         )
     with dcol2:
         st.code(st.session_state["last_email"], language=None)
-
+st.markdown(
+    """
+    
+    """,
+    unsafe_allow_html=True,
 )
+

@@ -130,7 +130,7 @@ st.markdown(
 st.markdown(
     """
     <div class="hero">
-        <h1>✉️ AI Email Generator</h1>
+        <h1>AI Email Generator</h1>
         <p>Turn a topic and a few bullet points into a polished, ready-to-send email — powered by Groq.</p>
     </div>
     """,
@@ -148,7 +148,7 @@ if not GROQ_API_KEY:
 # SIDEBAR — SETTINGS
 # ----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### ⚙️ Email Settings")
+    st.markdown("### Email Settings")
 
     tone = st.selectbox(
         "Tone",
@@ -176,7 +176,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### 👤 Optional details")
+    st.markdown("### Optional details")
     sender_name = st.text_input("Your name (signature)", "")
     recipient_name = st.text_input("Recipient's name", "")
     subject_hint = st.text_input("Preferred subject line (optional)", "")
@@ -197,13 +197,13 @@ col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### 📝 What is this email about?")
+    st.markdown("#### What is this email about?")
     topic = st.text_input(
         "Topic",
         placeholder="e.g. Requesting a deadline extension for the Q3 report",
     )
 
-    st.markdown("#### 📌 Key points to include")
+    st.markdown("#### Key points to include")
     points = st.text_area(
         "Our points (one per line)",
         placeholder=(
@@ -216,11 +216,11 @@ with col1:
     )
     st.markdown("</div>", unsafe_allow_html=True)
 
-    generate = st.button("✨ Generate Email", use_container_width=True)
+    generate = st.button("Generate Email", use_container_width=True)
 
 with col2:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### 📬 Generated Email")
+    st.markdown("#### Generated Email")
     output_placeholder = st.empty()
     output_placeholder.markdown(
         "<div class='email-output' style='opacity:0.5;'>"
@@ -292,7 +292,7 @@ REQUIREMENTS:
 # ----------------------------------------------------------------------------
 if generate:
     if not GROQ_API_KEY:
-        st.error("Cannot generate — no Groq API key configured.")
+        st.error("Cannot generate, no Groq API key configured.")
     elif not topic.strip():
         st.warning("Please enter a topic for the email.")
     else:
@@ -339,7 +339,7 @@ if "last_email" in st.session_state:
     dcol1, dcol2, dcol3 = st.columns([1, 1, 2])
     with dcol1:
         st.download_button(
-            "⬇️ Download as .txt",
+            "Download as .txt",
             data=st.session_state["last_email"],
             file_name=f"email_{int(time.time())}.txt",
             mime="text/plain",
@@ -348,11 +348,4 @@ if "last_email" in st.session_state:
     with dcol2:
         st.code(st.session_state["last_email"], language=None)
 
-st.markdown(
-    """
-    <div style="text-align:center; margin-top:3rem; color:#7a75a0; font-size:0.85rem;">
-        Built with Streamlit + Groq · Your API key stays server-side, never exposed to the browser.
-    </div>
-    """,
-    unsafe_allow_html=True,
 )

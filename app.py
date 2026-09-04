@@ -8,7 +8,7 @@ from groq import Groq
 # ----------------------------------------------------------------------------
 st.set_page_config(
     page_title="AI Email Generator",
-    page_icon="",
+    page_icon="✉️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -130,7 +130,7 @@ st.markdown(
 st.markdown(
     """
     <div class="hero">
-        <h1>AI Email Generator</h1>
+        <h1>✉️ AI Email Generator</h1>
         <p>Turn a topic and a few bullet points into a polished, ready-to-send email — powered by Groq.</p>
     </div>
     """,
@@ -148,7 +148,7 @@ if not GROQ_API_KEY:
 # SIDEBAR — SETTINGS
 # ----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### Email Settings")
+    st.markdown("### ⚙️ Email Settings")
 
     tone = st.selectbox(
         "Tone",
@@ -176,19 +176,47 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### Optional details")
+    st.markdown("### 👤 Optional details")
     sender_name = st.text_input("Your name (signature)", "")
     recipient_name = st.text_input("Recipient's name", "")
     subject_hint = st.text_input("Preferred subject line (optional)", "")
 
     st.markdown("---")
-    model = st.selectbox(
-        "Model",
-        ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "openai/gpt-oss-120b"],
+    MODEL_OPTIONS = {
+        "openai/gpt-oss-120b — best quality (production)": "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b — fastest, highest limits (production)": "openai/gpt-oss-20b",
+        "groq/compound — agentic, can browse the web (production)": "groq/compound",
+        "groq/compound-mini — lighter agentic system (production)": "groq/compound-mini",
+        "qwen/qwen3.6-27b — strong writer (preview)": "qwen/qwen3.6-27b",
+        "qwen/qwen3.8-27b — newer Qwen (preview)": "qwen/qwen3.8-27b",
+    }
+
+    model_label = st.selectbox(
+        "Model (free on Groq's developer tier — rate-limited, not paid)",
+        list(MODEL_OPTIONS.keys()),
         index=0,
-        help="Larger models generally write higher-quality, more nuanced emails.",
+        help=(
+            "gpt-oss-120b: best all-round writing quality. gpt-oss-20b: "
+            "much faster and higher rate limits, great for heavy iteration. "
+            "compound / compound-mini: can pull in live web info if the "
+            "email needs current facts. Qwen models are 'preview' — great "
+            "quality but Groq may change/retire them with little notice, "
+            "so don't rely on them for anything long-term."
+        ),
     )
+    model = MODEL_OPTIONS[model_label]
     temperature = st.slider("Creativity", 0.0, 1.2, 0.7, 0.1)
+
+    with st.expander("About Groq's free tier"):
+        st.markdown(
+            "Groq's free/developer tier is **rate-limited, not model-limited** — "
+            "no credit card needed. Note that `llama-3.1-8b-instant` and "
+            "`llama-3.3-70b-versatile` (once the go-to free models) have been "
+            "deprecated and moved to Enterprise-only pricing, so this app now "
+            "defaults to the current production models instead: "
+            "`openai/gpt-oss-120b` and `openai/gpt-oss-20b`. If you hit a rate "
+            "limit, switch to `gpt-oss-20b`, which has the highest throughput."
+        )
 
 # ----------------------------------------------------------------------------
 # MAIN INPUT AREA
@@ -197,13 +225,13 @@ col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### What is this email about?")
+    st.markdown("#### 📝 What is this email about?")
     topic = st.text_input(
         "Topic",
         placeholder="e.g. Requesting a deadline extension for the Q3 report",
     )
 
-    st.markdown("#### Key points to include")
+    st.markdown("#### 📌 Key points to include")
     points = st.text_area(
         "Our points (one per line)",
         placeholder=(
@@ -216,11 +244,11 @@ with col1:
     )
     st.markdown("</div>", unsafe_allow_html=True)
 
-    generate = st.button("Generate Email", use_container_width=True)
+    generate = st.button("✨ Generate Email", use_container_width=True)
 
 with col2:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### Generated Email")
+    st.markdown("#### 📬 Generated Email")
     output_placeholder = st.empty()
     output_placeholder.markdown(
         "<div class='email-output' style='opacity:0.5;'>"
@@ -292,7 +320,7 @@ REQUIREMENTS:
 # ----------------------------------------------------------------------------
 if generate:
     if not GROQ_API_KEY:
-        st.error("Cannot generate, no Groq API key configured.")
+        st.error("Cannot generate — no Groq API key configured.")
     elif not topic.strip():
         st.warning("Please enter a topic for the email.")
     else:
@@ -329,7 +357,22 @@ if generate:
                 st.success("Email generated!")
 
             except Exception as e:
-                st.error(f"Something went wrong while generating the email: {e}")
+                err = str(e)
+                if "rate_limit" in err.lower() or "429" in err:
+                    st.error(
+                        "You've hit Groq's free-tier rate limit for this model. "
+                        "Wait a minute and try again, or switch to "
+                        "`openai/gpt-oss-20b` in the sidebar, which has the "
+                        "highest throughput and rate limits of the free models."
+                    )
+                elif "decommission" in err.lower() or "deprecat" in err.lower():
+                    st.error(
+                        "This model has been deprecated by Groq. Pick a "
+                        "different model from the sidebar — `openai/gpt-oss-120b` "
+                        "or `openai/gpt-oss-20b` are current and reliable."
+                    )
+                else:
+                    st.error(f"Something went wrong while generating the email: {e}")
 
 # ----------------------------------------------------------------------------
 # DOWNLOAD / COPY
@@ -339,7 +382,7 @@ if "last_email" in st.session_state:
     dcol1, dcol2, dcol3 = st.columns([1, 1, 2])
     with dcol1:
         st.download_button(
-            "Download as .txt",
+            "⬇️ Download as .txt",
             data=st.session_state["last_email"],
             file_name=f"email_{int(time.time())}.txt",
             mime="text/plain",
@@ -347,10 +390,12 @@ if "last_email" in st.session_state:
         )
     with dcol2:
         st.code(st.session_state["last_email"], language=None)
+
 st.markdown(
     """
-    
+    <div style="text-align:center; margin-top:3rem; color:#7a75a0; font-size:0.85rem;">
+        Built with Streamlit + Groq · Your API key stays server-side, never exposed to the browser.
+    </div>
     """,
     unsafe_allow_html=True,
 )
-

@@ -68,7 +68,7 @@ st.markdown(
             font-size: 1.05rem;
         }
 
-        .glass-card {
+        .st-key-input_card, .st-key-output_card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 18px;
@@ -227,38 +227,36 @@ with st.sidebar:
 col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### What is this email about?")
-    topic = st.text_input(
-        "Topic",
-        placeholder="e.g. Requesting a deadline extension for the Q3 report",
-    )
+    with st.container(key="input_card"):
+        st.markdown("#### What is this email about?")
+        topic = st.text_input(
+            "Topic",
+            placeholder="e.g. Requesting a deadline extension for the Q3 report",
+        )
 
-    st.markdown("#### Key points to include")
-    points = st.text_area(
-        "Our points (one per line)",
-        placeholder=(
-            "e.g.\n"
-            "* The client data arrived 3 days later than planned\n"
-            "* We need 5 extra business days\n"
-            "* Quality will not be affected"
-        ),
-        height=180,
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("#### Key points to include")
+        points = st.text_area(
+            "Our points (one per line)",
+            placeholder=(
+                "e.g.\n"
+                "* The client data arrived 3 days later than planned\n"
+                "* We need 5 extra business days\n"
+                "* Quality will not be affected"
+            ),
+            height=180,
+        )
 
-    generate = st.button("Generate Email", use_container_width=True)
+        generate = st.button("Generate Email", use_container_width=True)
 
 with col2:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### Generated Email")
-    output_placeholder = st.empty()
-    output_placeholder.markdown(
-        "<div class='email-output' style='opacity:0.5;'>"
-        "Your generated email will appear here...</div>",
-        unsafe_allow_html=True,
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+    with st.container(key="output_card"):
+        st.markdown("#### Generated Email")
+        output_placeholder = st.empty()
+        output_placeholder.markdown(
+            "<div class='email-output' style='opacity:0.5;'>"
+            "Your generated email will appear here...</div>",
+            unsafe_allow_html=True,
+        )
 
 # ============================================================================
 # PROMPT ENGINEERING FOR HIGH QUALITY OUTPUT

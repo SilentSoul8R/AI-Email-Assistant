@@ -3,21 +3,22 @@ import time
 import streamlit as st
 from groq import Groq
 
-# ----------------------------------------------------------------------------
+# ============================================================================
 # PAGE CONFIG
-# ----------------------------------------------------------------------------
+# ============================================================================
 st.set_page_config(
     page_title="AI Email Generator",
-    page_icon="✉️",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ----------------------------------------------------------------------------
-# API KEY HANDLING (never hard-coded, never shown in UI)
-# Priority: Streamlit secrets (used on Streamlit Cloud) -> environment variable
-# (used in Colab / local, set via os.environ, e.g. from a Colab "Secrets" tab)
-# ----------------------------------------------------------------------------
+# ============================================================================
+# API KEY HANDLING (never hardcoded, never shown in UI)
+# Priority: Streamlit secrets (used on Streamlit Cloud), then environment
+# variable (used in Colab / local, set via os.environ, e.g. from a Colab
+# "Secrets" tab)
+# ============================================================================
 def get_api_key() -> str:
     key = ""
     try:
@@ -31,9 +32,9 @@ def get_api_key() -> str:
 
 GROQ_API_KEY = get_api_key()
 
-# ----------------------------------------------------------------------------
+# ============================================================================
 # STYLING
-# ----------------------------------------------------------------------------
+# ============================================================================
 st.markdown(
     """
     <style>
@@ -124,14 +125,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ----------------------------------------------------------------------------
+# ============================================================================
 # HERO
-# ----------------------------------------------------------------------------
+# ============================================================================
 st.markdown(
     """
     <div class="hero">
-        <h1>✉️ AI Email Generator</h1>
-        <p>Turn a topic and a few bullet points into a polished, ready-to-send email — powered by Groq.</p>
+        <h1>AI Email Generator</h1>
+        <p>Turn a topic and a few bullet points into a polished, ready to send email, powered by Groq.</p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -140,15 +141,16 @@ st.markdown(
 if not GROQ_API_KEY:
     st.error(
         "No Groq API key found. Add `GROQ_API_KEY` to your Streamlit secrets "
-        "(Settings → Secrets on Streamlit Cloud) or set it as an environment "
-        "variable before running. The key is never read from or shown in the UI."
+        "(Settings, then Secrets, on Streamlit Cloud) or set it as an "
+        "environment variable before running. The key is never read from or "
+        "shown in the UI."
     )
 
-# ----------------------------------------------------------------------------
-# SIDEBAR — SETTINGS
-# ----------------------------------------------------------------------------
+# ============================================================================
+# SIDEBAR: SETTINGS
+# ============================================================================
 with st.sidebar:
-    st.markdown("### ⚙️ Email Settings")
+    st.markdown("### Email Settings")
 
     tone = st.selectbox(
         "Tone",
@@ -163,7 +165,7 @@ with st.sidebar:
     email_type = st.selectbox(
         "Email type",
         [
-            "General", "Sales/Outreach", "Follow-up", "Apology",
+            "General", "Sales/Outreach", "Follow up", "Apology",
             "Thank you", "Meeting request", "Announcement",
             "Complaint / Escalation", "Job application / Cover letter",
             "Networking",
@@ -176,32 +178,32 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### 👤 Optional details")
+    st.markdown("### Optional details")
     sender_name = st.text_input("Your name (signature)", "")
     recipient_name = st.text_input("Recipient's name", "")
     subject_hint = st.text_input("Preferred subject line (optional)", "")
 
     st.markdown("---")
     MODEL_OPTIONS = {
-        "openai/gpt-oss-120b — best quality (production)": "openai/gpt-oss-120b",
-        "openai/gpt-oss-20b — fastest, highest limits (production)": "openai/gpt-oss-20b",
-        "groq/compound — agentic, can browse the web (production)": "groq/compound",
-        "groq/compound-mini — lighter agentic system (production)": "groq/compound-mini",
-        "qwen/qwen3.6-27b — strong writer (preview)": "qwen/qwen3.6-27b",
-        "qwen/qwen3.8-27b — newer Qwen (preview)": "qwen/qwen3.8-27b",
+        "GPT OSS 120B (best quality, production)": "openai/gpt-oss-120b",
+        "GPT OSS 20B (fastest, highest limits, production)": "openai/gpt-oss-20b",
+        "Compound (agentic, can browse the web, production)": "groq/compound",
+        "Compound Mini (lighter agentic system, production)": "groq/compound-mini",
+        "Qwen 3.6 27B (strong writer, preview)": "qwen/qwen3.6-27b",
+        "Qwen 3.8 27B (newer Qwen, preview)": "qwen/qwen3.8-27b",
     }
 
     model_label = st.selectbox(
-        "Model (free on Groq's developer tier — rate-limited, not paid)",
+        "Model (free on Groq's developer tier, rate limited, not paid)",
         list(MODEL_OPTIONS.keys()),
         index=0,
         help=(
-            "gpt-oss-120b: best all-round writing quality. gpt-oss-20b: "
+            "GPT OSS 120B: best all round writing quality. GPT OSS 20B: "
             "much faster and higher rate limits, great for heavy iteration. "
-            "compound / compound-mini: can pull in live web info if the "
-            "email needs current facts. Qwen models are 'preview' — great "
-            "quality but Groq may change/retire them with little notice, "
-            "so don't rely on them for anything long-term."
+            "Compound and Compound Mini: can pull in live web info if the "
+            "email needs current facts. Qwen models are labeled preview, "
+            "great quality but Groq may change or retire them with little "
+            "notice, so do not rely on them for anything long term."
         ),
     )
     model = MODEL_OPTIONS[model_label]
@@ -209,46 +211,47 @@ with st.sidebar:
 
     with st.expander("About Groq's free tier"):
         st.markdown(
-            "Groq's free/developer tier is **rate-limited, not model-limited** — "
-            "no credit card needed. Note that `llama-3.1-8b-instant` and "
-            "`llama-3.3-70b-versatile` (once the go-to free models) have been "
-            "deprecated and moved to Enterprise-only pricing, so this app now "
-            "defaults to the current production models instead: "
-            "`openai/gpt-oss-120b` and `openai/gpt-oss-20b`. If you hit a rate "
-            "limit, switch to `gpt-oss-20b`, which has the highest throughput."
+            "Groq's free (developer) tier is rate limited, not model "
+            "limited, and needs no credit card. Note that `llama-3.1-8b-instant` "
+            "and `llama-3.3-70b-versatile` (once the standard free models) "
+            "have been deprecated and moved to Enterprise only pricing, so "
+            "this app now defaults to the current production models "
+            "instead: `openai/gpt-oss-120b` and `openai/gpt-oss-20b`. If "
+            "you hit a rate limit, switch to GPT OSS 20B, which has the "
+            "highest throughput."
         )
 
-# ----------------------------------------------------------------------------
+# ============================================================================
 # MAIN INPUT AREA
-# ----------------------------------------------------------------------------
+# ============================================================================
 col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### 📝 What is this email about?")
+    st.markdown("#### What is this email about?")
     topic = st.text_input(
         "Topic",
         placeholder="e.g. Requesting a deadline extension for the Q3 report",
     )
 
-    st.markdown("#### 📌 Key points to include")
+    st.markdown("#### Key points to include")
     points = st.text_area(
         "Our points (one per line)",
         placeholder=(
             "e.g.\n"
-            "- The client data arrived 3 days later than planned\n"
-            "- We need 5 extra business days\n"
-            "- Quality will not be affected"
+            "* The client data arrived 3 days later than planned\n"
+            "* We need 5 extra business days\n"
+            "* Quality will not be affected"
         ),
         height=180,
     )
     st.markdown("</div>", unsafe_allow_html=True)
 
-    generate = st.button("✨ Generate Email", use_container_width=True)
+    generate = st.button("Generate Email", use_container_width=True)
 
 with col2:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("#### 📬 Generated Email")
+    st.markdown("#### Generated Email")
     output_placeholder = st.empty()
     output_placeholder.markdown(
         "<div class='email-output' style='opacity:0.5;'>"
@@ -257,17 +260,17 @@ with col2:
     )
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ----------------------------------------------------------------------------
-# PROMPT ENGINEERING — for high quality output
-# ----------------------------------------------------------------------------
+# ============================================================================
+# PROMPT ENGINEERING FOR HIGH QUALITY OUTPUT
+# ============================================================================
 def build_prompt():
     bullet_points = "\n".join(
-        f"- {line.strip()}" for line in points.splitlines() if line.strip()
+        f"* {line.strip()}" for line in points.splitlines() if line.strip()
     )
     length_guide = {
-        "Short": "under 100 words, 2-3 short paragraphs max",
-        "Medium": "roughly 120-200 words, well-structured",
-        "Long": "roughly 220-320 words, thorough but not padded",
+        "Short": "under 100 words, 2 to 3 short paragraphs at most",
+        "Medium": "roughly 120 to 200 words, well organized",
+        "Long": "roughly 220 to 320 words, thorough but not padded",
     }[length]
 
     signature = sender_name.strip() if sender_name.strip() else "[Your Name]"
@@ -279,10 +282,11 @@ def build_prompt():
         else "Write a compelling, specific subject line (not generic)."
     )
 
-    return f"""You are an elite professional email copywriter. Write a high-quality,
-human-sounding email based on the details below. The email must read as if a
-thoughtful, articulate person wrote it — never generic, robotic, or filled with
-clichés like "I hope this email finds you well" or "In today's fast-paced world".
+    return f"""You are an expert professional email copywriter. Write a high
+quality, natural sounding email based on the details below. The email must
+read as if a thoughtful, articulate person wrote it: never generic, robotic,
+or filled with cliches like "I hope this email finds you well" or "In
+today's fast paced world".
 
 EMAIL TYPE: {email_type}
 TONE: {tone}
@@ -294,33 +298,33 @@ TOPIC:
 {topic.strip()}
 
 KEY POINTS TO NATURALLY WEAVE IN (do not just list them, integrate them fluidly):
-{bullet_points if bullet_points else "(none provided — infer sensible content from the topic)"}
+{bullet_points if bullet_points else "(none provided, infer sensible content from the topic)"}
 
 REQUIREMENTS:
 1. {subject_instruction}
-2. Open with a natural, non-cliché greeting appropriate to the tone.
+2. Open with a natural, original greeting appropriate to the tone.
 3. The body must have a clear purpose, logical flow, and a strong opening line
    that immediately signals why the reader should care.
 4. Every key point above must be reflected in the email, in your own words,
-   integrated smoothly — not copy-pasted verbatim.
+   integrated smoothly, not copied verbatim.
 5. Match the requested tone precisely and consistently throughout.
 6. End with a clear, specific call to action or next step (when relevant to
-   the email type), followed by an appropriate sign-off and the sender name.
-7. Use proper email formatting with short paragraphs and good whitespace —
+   the email type), followed by an appropriate closing and the sender name.
+7. Use proper email formatting with short paragraphs and good whitespace,
    no walls of text.
 8. Do not use placeholder brackets except for the sender/recipient names
-   already given. Do not add meta-commentary, notes, or explanations.
+   already given. Do not add extra commentary, notes, or explanations.
 9. Output ONLY the email itself, starting with "Subject: ..." on the first
    line, followed by a blank line, then the email body. Nothing else.
 """
 
 
-# ----------------------------------------------------------------------------
+# ============================================================================
 # GENERATION
-# ----------------------------------------------------------------------------
+# ============================================================================
 if generate:
     if not GROQ_API_KEY:
-        st.error("Cannot generate — no Groq API key configured.")
+        st.error("Cannot generate: no Groq API key configured.")
     elif not topic.strip():
         st.warning("Please enter a topic for the email.")
     else:
@@ -335,8 +339,8 @@ if generate:
                         {
                             "role": "system",
                             "content": (
-                                "You are a world-class professional email writer "
-                                "known for clear, persuasive, and natural-sounding "
+                                "You are an expert professional email writer "
+                                "known for clear, persuasive, natural sounding "
                                 "emails. You never sound like a generic AI."
                             ),
                         },
@@ -360,29 +364,29 @@ if generate:
                 err = str(e)
                 if "rate_limit" in err.lower() or "429" in err:
                     st.error(
-                        "You've hit Groq's free-tier rate limit for this model. "
-                        "Wait a minute and try again, or switch to "
-                        "`openai/gpt-oss-20b` in the sidebar, which has the "
-                        "highest throughput and rate limits of the free models."
+                        "You've hit Groq's free tier rate limit for this "
+                        "model. Wait a minute and try again, or switch to "
+                        "GPT OSS 20B in the sidebar, which has the highest "
+                        "throughput and rate limits of the free models."
                     )
                 elif "decommission" in err.lower() or "deprecat" in err.lower():
                     st.error(
                         "This model has been deprecated by Groq. Pick a "
-                        "different model from the sidebar — `openai/gpt-oss-120b` "
-                        "or `openai/gpt-oss-20b` are current and reliable."
+                        "different model from the sidebar: GPT OSS 120B or "
+                        "GPT OSS 20B are current and reliable."
                     )
                 else:
                     st.error(f"Something went wrong while generating the email: {e}")
 
-# ----------------------------------------------------------------------------
+# ============================================================================
 # DOWNLOAD / COPY
-# ----------------------------------------------------------------------------
+# ============================================================================
 if "last_email" in st.session_state:
     st.markdown("<br>", unsafe_allow_html=True)
     dcol1, dcol2, dcol3 = st.columns([1, 1, 2])
     with dcol1:
         st.download_button(
-            "⬇️ Download as .txt",
+            "Download as .txt",
             data=st.session_state["last_email"],
             file_name=f"email_{int(time.time())}.txt",
             mime="text/plain",
@@ -394,7 +398,7 @@ if "last_email" in st.session_state:
 st.markdown(
     """
     <div style="text-align:center; margin-top:3rem; color:#7a75a0; font-size:0.85rem;">
-        Built with Streamlit + Groq · Your API key stays server-side, never exposed to the browser.
+        Built with Streamlit and Groq. Your API key stays server side, never exposed to the browser.
     </div>
     """,
     unsafe_allow_html=True,

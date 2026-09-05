@@ -7,9 +7,9 @@ Powered by Groq, so it's not just smart, it's absurdly fast.
 ## What it actually does
  
 You type:
-- **Topic** — what the email is about
-- **Tone** — professional, friendly, persuasive, apologetic, urgent, whatever fits
-- **Our points** — the key stuff that has to be in there
+- **Topic**, what the email is about
+- **Tone**, professional, friendly, persuasive, apologetic, urgent, whatever fits
+- **Our points**, the key stuff that has to be in there
 It gives you back:
 - A real subject line (not "Subject: Update")
 - A properly structured email with your points woven in naturally, not just listed like a grocery receipt
@@ -51,7 +51,7 @@ streamlit run app.py
 ```
    GROQ_API_KEY = "your_key_here"
 ```
-4. Hit deploy. Your key stays server side the whole time — it never touches the browser, never shows up in the UI, never leaks into your commits.
+4. Hit deploy. Your key stays server side the whole time, it never touches the browser, never shows up in the UI, never leaks into your commits.
 ## Get a Groq API key
  
 Free, no credit card, takes about 30 seconds: [console.groq.com](https://console.groq.com)
@@ -60,13 +60,13 @@ Free, no credit card, takes about 30 seconds: [console.groq.com](https://console
  
 All models in the dropdown are on Groq's free developer tier (rate limited, not paid):
  
-- **GPT OSS 120B** — the quality pick
-- **GPT OSS 20B** — the speed demon, highest rate limits
-- **Compound / Compound Mini** — can browse the web if your email needs current facts
-- **Qwen 3.6 / 3.8 27B** — preview models, strong writers, could get renamed or retired by Groq without much warning
+- **GPT OSS 120B**, the quality pick
+- **GPT OSS 20B**, the speed demon, highest rate limits
+- **Compound / Compound Mini**, can browse the web if your email needs current facts
+- **Qwen 3.6 / 3.8 27B**, preview models, strong writers, could get renamed or retired by Groq without much warning
 ## A quick warning about "free" models
  
-Groq occasionally retires models (RIP `llama-3.1-8b-instant` and `llama-3.3-70b-versatile`, moved to Enterprise pricing). If a model in the dropdown ever starts throwing errors, swap to `openai/gpt-oss-120b` or `openai/gpt-oss-20b` — those are the current, stable, free workhorses.
+Groq occasionally retires models (RIP `llama-3.1-8b-instant` and `llama-3.3-70b-versatile`, moved to Enterprise pricing). If a model in the dropdown ever starts throwing errors, swap to `openai/gpt-oss-120b` or `openai/gpt-oss-20b`, those are the current, stable, free workhorses.
  
 ## Why this exists
  
